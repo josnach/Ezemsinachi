@@ -138,6 +138,22 @@
   nav a:hover::after{transform:scaleX(1);}
 
   .header-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  .nav-toggle{
+    display:none;
+    align-items:center;justify-content:center;
+    width:36px;height:36px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--ink-900);
+    color:var(--paper);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .nav-toggle:hover{border-color:var(--amber);}
+  .nav-toggle svg{width:18px;height:18px;}
+  .nav-toggle .icon-close{display:none;}
+  .nav-toggle.open .icon-menu{display:none;}
+  .nav-toggle.open .icon-close{display:block;}
   .theme-toggle{
     display:inline-flex;align-items:center;justify-content:center;
     width:36px;height:36px;
@@ -471,6 +487,27 @@
     .log::before{left:42px;}
     .log li::after{left:39px;}
     .proj-row{margin:0;padding:22px 14px;}
+
+    .nav-toggle{display:inline-flex;}
+    nav{
+      display:none;
+      position:absolute;
+      top:100%;left:0;right:0;
+      flex-direction:column;
+      gap:0;
+      background:var(--ink-900);
+      border-bottom:1px solid var(--border);
+      padding:6px 24px 16px;
+      box-shadow:0 18px 32px -18px rgba(0,0,0,0.55);
+    }
+    nav.open{display:flex;}
+    nav a{
+      width:100%;
+      padding:14px 0;
+      border-top:1px solid var(--border-soft);
+    }
+    nav a:first-child{border-top:none;}
+    nav a::after{display:none;}
   }
 </style>
 </head>
@@ -501,7 +538,11 @@
       <div class="brand">ezemsinachi<span>@</span>dev</div>
     </div>
     <div class="header-right">
-      <nav>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="site-nav">
+        <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+      <nav id="site-nav">
         <a href="#about">About</a>
         <a href="#skills">Skills</a>
         <a href="#certifications">Certifications</a>
@@ -555,9 +596,9 @@
     <div class="wrap about-grid">
       <div>
         <h2>About</h2>
-        <p>I spent the better part of five years as the person hotels called when the network went down, a printer jammed, or a guest couldn't get online — most recently as IT Officer at Koraf Hotels and Apartments in Abuja, with an earlier internship at Silverbird and a year teaching during my NYSC service year.</p>
-        <p>Somewhere in there I started writing small Python scripts to save myself work. One of them cut close to an hour a week off manual maintenance tracking, and that itch to automate turned into wanting to build software properly, not just keep it running.</p>
-        <p>I'm a backend developer at core — Node.js, Express and MongoDB — and I'm rounding that out with React and TypeScript through TS Academy's full-stack program, while leaning on the systems instincts from years of keeping other people's infrastructure alive.</p>
+        <p>I'm a full-stack developer with a genuine passion for building software that's both performant and scalable. My core strength lies in backend systems; Node.js, Express, and MongoDB — where I focus on writing clean, maintainable code and designing robust server architectures.</p>
+        <p>I'm actively expanding into frontend development with React and TypeScript, working toward bridging the gap between solid backend engineering and polished user interfaces. That full-stack range, paired with systems instincts built from years in network infrastructure, is what shapes how I approach every project.</p>
+        <p>I'm committed to staying current with industry best practices and growing as a well-rounded engineer.</p>
       </div>
       <div>
         <ul class="log">
@@ -750,7 +791,6 @@
           <textarea id="cf-message" placeholder="Tell me about your project…" required></textarea>
         </div>
         <button type="submit" class="btn-send">Send Message</button>
-        <p class="form-note">Opens your email app with the message addressed to joshuaezemihediwa@gmail.com.</p>
       </form>
     </div>
   </section>
@@ -761,6 +801,31 @@
 </footer>
 
 <script>
+  var navToggle = document.getElementById('nav-toggle');
+  var siteNav = document.getElementById('site-nav');
+
+  function closeNav(){
+    siteNav.classList.remove('open');
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded','false');
+  }
+
+  navToggle.addEventListener('click', function(){
+    var isOpen = siteNav.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  siteNav.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', closeNav);
+  });
+
+  document.addEventListener('click', function(e){
+    if(siteNav.classList.contains('open') && !siteNav.contains(e.target) && !navToggle.contains(e.target)){
+      closeNav();
+    }
+  });
+
   document.getElementById('theme-toggle').addEventListener('click', function () {
     var root = document.documentElement;
     var isLight = root.getAttribute('data-theme') === 'light';
